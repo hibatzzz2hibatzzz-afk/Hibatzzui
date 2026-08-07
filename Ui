@@ -1,0 +1,692 @@
+local Hibatzzz = {}
+Hibatzzz.__index = Hibatzzz
+
+local CoreGui = game:GetService("CoreGui")
+local TweenService = game:GetService("TweenService")
+
+if CoreGui:FindFirstChild("HibatzzzUIFrame") then
+    CoreGui.HibatzzzUIFrame:Destroy()
+end
+
+local ScreenGui = Instance.new("ScreenGui")
+ScreenGui.Name = "HibatzzzUIFrame"
+ScreenGui.ResetOnSpawn = false
+ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+
+if syn and syn.protect_gui then
+    syn.protect_gui(ScreenGui)
+    ScreenGui.Parent = CoreGui
+elseif gethui then
+    ScreenGui.Parent = gethui()
+else
+    ScreenGui.Parent = CoreGui
+end
+
+-- Container Notifikasi
+local NotifContainer = Instance.new("Frame")
+NotifContainer.Name = "NotifContainer"
+NotifContainer.Size = UDim2.new(0, 220, 1, -20)
+NotifContainer.Position = UDim2.new(1, -230, 0, 10)
+NotifContainer.BackgroundTransparency = 1
+NotifContainer.Parent = ScreenGui
+
+local NotifLayout = Instance.new("UIListLayout")
+NotifLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
+NotifLayout.Padding = UDim.new(0, 8)
+NotifLayout.Parent = NotifContainer
+
+function Hibatzzz:Notification(config)
+    config = config or {}
+    local title = config.Title or "Notification"
+    local desc = config.Description or "Hello World!"
+    local duration = config.Duration or 2.5
+
+    local notifCount = 0
+    for _, child in ipairs(NotifContainer:GetChildren()) do
+        if child:IsA("Frame") then notifCount = notifCount + 1 end
+    end
+    if notifCount >= 4 then
+        local oldest = NotifContainer:FindFirstChildOfClass("Frame")
+        if oldest then oldest:Destroy() end
+    end
+
+    local NotifFrame = Instance.new("Frame")
+    NotifFrame.Name = "Notification"
+    NotifFrame.Size = UDim2.new(1, 0, 0, 50)
+    NotifFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 28)
+    NotifFrame.BackgroundTransparency = 1
+    NotifFrame.Parent = NotifContainer
+
+    local NotifCorner = Instance.new("UICorner")
+    NotifCorner.CornerRadius = UDim.new(0, 8)
+    NotifCorner.Parent = NotifFrame
+
+    local NotifStroke = Instance.new("UIStroke")
+    NotifStroke.Color = Color3.fromRGB(0, 180, 120)
+    NotifStroke.Thickness = 1.2
+    NotifStroke.Transparency = 1
+    NotifStroke.Parent = NotifFrame
+
+    local TitleLbl = Instance.new("TextLabel")
+    TitleLbl.Size = UDim2.new(1, -16, 0, 18)
+    TitleLbl.Position = UDim2.new(0, 8, 0, 4)
+    TitleLbl.Text = title
+    TitleLbl.TextColor3 = Color3.fromRGB(240, 240, 255)
+    TitleLbl.Font = Enum.Font.GothamBold
+    TitleLbl.TextSize = 11
+    TitleLbl.TextXAlignment = Enum.TextXAlignment.Left
+    TitleLbl.BackgroundTransparency = 1
+    TitleLbl.TextTransparency = 1
+    TitleLbl.Parent = NotifFrame
+
+    local DescLbl = Instance.new("TextLabel")
+    DescLbl.Size = UDim2.new(1, -16, 0, 24)
+    DescLbl.Position = UDim2.new(0, 8, 0, 20)
+    DescLbl.Text = desc
+    DescLbl.TextColor3 = Color3.fromRGB(160, 160, 180)
+    DescLbl.Font = Enum.Font.Gotham
+    DescLbl.TextSize = 10
+    DescLbl.TextXAlignment = Enum.TextXAlignment.Left
+    DescLbl.TextWrapped = true
+    DescLbl.BackgroundTransparency = 1
+    DescLbl.TextTransparency = 1
+    DescLbl.Parent = NotifFrame
+
+    TweenService:Create(NotifFrame, TweenInfo.new(0.3), {BackgroundTransparency = 0}):Play()
+    TweenService:Create(NotifStroke, TweenInfo.new(0.3), {Transparency = 0}):Play()
+    TweenService:Create(TitleLbl, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
+    TweenService:Create(DescLbl, TweenInfo.new(0.3), {TextTransparency = 0}):Play()
+
+    task.delay(duration, function()
+        if NotifFrame and NotifFrame.Parent then
+            local tween = TweenService:Create(NotifFrame, TweenInfo.new(0.3), {BackgroundTransparency = 1})
+            TweenService:Create(NotifStroke, TweenInfo.new(0.3), {Transparency = 1}):Play()
+            TweenService:Create(TitleLbl, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+            TweenService:Create(DescLbl, TweenInfo.new(0.3), {TextTransparency = 1}):Play()
+            tween:Play()
+            tween.Completed:Connect(function() NotifFrame:Destroy() end)
+        end
+    end)
+end
+
+function Hibatzzz.CreateWindow(config)
+    config = config or {}
+    local hubTitle = config.Title or "UI Hub"
+    local hubSubtitle = config.SubTitle or "Mobile Edition"
+    local hubIcon = config.Icon or ""
+    
+    -- CONFIG KEY SYSTEM
+    local useKeySystem = config.KeySystem or false
+    local keySettings = config.KeySettings or {}
+    local correctKey = keySettings.Key or "Hibatzzz123"
+    local keyLink = keySettings.KeyLink or "https://link-to-get-key.com"
+
+    local Window = { Tabs = {}, CreatedTabs = {} }
+
+    function Window:Notification(cfg)
+        Hibatzzz:Notification(cfg)
+    end
+
+    local MainFrame = Instance.new("Frame")
+    MainFrame.Name = "MainFrame"
+    MainFrame.Size = UDim2.new(0, 360, 0, 270)
+    MainFrame.Position = UDim2.new(0.5, -180, 0.5, -135)
+    MainFrame.BackgroundColor3 = Color3.fromRGB(16, 16, 22)
+    MainFrame.BorderSizePixel = 0
+    MainFrame.Active = true
+    MainFrame.Draggable = true
+    MainFrame.Parent = ScreenGui
+    MainFrame.Visible = not useKeySystem -- Sembunyikan jika menggunakan KeySystem
+
+    local UICorner = Instance.new("UICorner")
+    UICorner.CornerRadius = UDim.new(0, 10)
+    UICorner.Parent = MainFrame
+
+    local UIStroke = Instance.new("UIStroke")
+    UIStroke.Color = Color3.fromRGB(40, 40, 55)
+    UIStroke.Thickness = 1.5
+    UIStroke.Parent = MainFrame
+
+    local OpenBtn = Instance.new("TextButton")
+    OpenBtn.Name = "OpenHibatzzzBtn"
+    OpenBtn.Size = UDim2.new(0, 110, 0, 35)
+    OpenBtn.Position = UDim2.new(0.02, 0, 0.2, 0)
+    OpenBtn.BackgroundColor3 = Color3.fromRGB(22, 22, 30)
+    OpenBtn.Text = "Open Hibatzzz"
+    OpenBtn.TextColor3 = Color3.fromRGB(240, 240, 255)
+    OpenBtn.Font = Enum.Font.GothamBold
+    OpenBtn.TextSize = 11
+    OpenBtn.Visible = false
+    OpenBtn.Active = true
+    OpenBtn.Draggable = true
+    OpenBtn.Parent = ScreenGui
+
+    local OpenCorner = Instance.new("UICorner")
+    OpenCorner.CornerRadius = UDim.new(0, 8)
+    OpenCorner.Parent = OpenBtn
+
+    local OpenStroke = Instance.new("UIStroke")
+    OpenStroke.Color = Color3.fromRGB(0, 180, 120)
+    OpenStroke.Thickness = 1.5
+    OpenStroke.Parent = OpenBtn
+
+    -- ========================================================
+    -- IMPLEMENTASI KEY SYSTEM FRAME
+    -- ========================================================
+    if useKeySystem then
+        local KeyFrame = Instance.new("Frame")
+        KeyFrame.Name = "KeyFrame"
+        KeyFrame.Size = UDim2.new(0, 300, 0, 180)
+        KeyFrame.Position = UDim2.new(0.5, -150, 0.5, -90)
+        KeyFrame.BackgroundColor3 = Color3.fromRGB(16, 16, 22)
+        KeyFrame.BorderSizePixel = 0
+        KeyFrame.Active = true
+        KeyFrame.Draggable = true
+        KeyFrame.Parent = ScreenGui
+
+        local KeyCorner = Instance.new("UICorner")
+        KeyCorner.CornerRadius = UDim.new(0, 10)
+        KeyCorner.Parent = KeyFrame
+
+        local KeyStroke = Instance.new("UIStroke")
+        KeyStroke.Color = Color3.fromRGB(0, 180, 120)
+        KeyStroke.Thickness = 1.5
+        KeyStroke.Parent = KeyFrame
+
+        local KeyTitle = Instance.new("TextLabel")
+        KeyTitle.Size = UDim2.new(1, 0, 0, 30)
+        KeyTitle.Position = UDim2.new(0, 0, 0, 10)
+        KeyTitle.Text = hubTitle .. " - Key System"
+        KeyTitle.TextColor3 = Color3.fromRGB(240, 240, 255)
+        KeyTitle.Font = Enum.Font.GothamBold
+        KeyTitle.TextSize = 14
+        KeyTitle.BackgroundTransparency = 1
+        KeyTitle.Parent = KeyFrame
+
+        local KeySub = Instance.new("TextLabel")
+        KeySub.Size = UDim2.new(1, -20, 0, 20)
+        KeySub.Position = UDim2.new(0, 10, 0, 35)
+        KeySub.Text = "Please enter the key to access the script."
+        KeySub.TextColor3 = Color3.fromRGB(140, 140, 160)
+        KeySub.Font = Enum.Font.Gotham
+        KeySub.TextSize = 10
+        KeySub.BackgroundTransparency = 1
+        KeySub.Parent = KeyFrame
+
+        local KeyBox = Instance.new("TextBox")
+        KeyBox.Size = UDim2.new(1, -40, 0, 35)
+        KeyBox.Position = UDim2.new(0, 20, 0, 65)
+        KeyBox.BackgroundColor3 = Color3.fromRGB(24, 24, 32)
+        KeyBox.Text = ""
+        KeyBox.PlaceholderText = "Enter Key Here..."
+        KeyBox.PlaceholderColor3 = Color3.fromRGB(100, 100, 120)
+        KeyBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+        KeyBox.Font = Enum.Font.GothamMedium
+        KeyBox.TextSize = 11
+        KeyBox.Parent = KeyFrame
+
+        local BoxCorner = Instance.new("UICorner")
+        BoxCorner.CornerRadius = UDim.new(0, 6)
+        BoxCorner.Parent = KeyBox
+
+        local BoxStroke = Instance.new("UIStroke")
+        BoxStroke.Color = Color3.fromRGB(40, 40, 55)
+        BoxStroke.Thickness = 1
+        BoxStroke.Parent = KeyBox
+
+        local SubmitBtn = Instance.new("TextButton")
+        SubmitBtn.Size = UDim2.new(0.43, 0, 0, 32)
+        SubmitBtn.Position = UDim2.new(0, 20, 0, 120)
+        SubmitBtn.BackgroundColor3 = Color3.fromRGB(0, 140, 90)
+        SubmitBtn.Text = "Check Key"
+        SubmitBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        SubmitBtn.Font = Enum.Font.GothamBold
+        SubmitBtn.TextSize = 11
+        SubmitBtn.Parent = KeyFrame
+
+        local SubmitCorner = Instance.new("UICorner")
+        SubmitCorner.CornerRadius = UDim.new(0, 6)
+        SubmitCorner.Parent = SubmitBtn
+
+        local GetKeyBtn = Instance.new("TextButton")
+        GetKeyBtn.Size = UDim2.new(0.43, 0, 0, 32)
+        GetKeyBtn.Position = UDim2.new(0.57, -20, 0, 120)
+        GetKeyBtn.BackgroundColor3 = Color3.fromRGB(28, 28, 38)
+        GetKeyBtn.Text = "Get Key"
+        GetKeyBtn.TextColor3 = Color3.fromRGB(200, 200, 220)
+        GetKeyBtn.Font = Enum.Font.GothamBold
+        GetKeyBtn.TextSize = 11
+        GetKeyBtn.Parent = KeyFrame
+
+        local GetCorner = Instance.new("UICorner")
+        GetCorner.CornerRadius = UDim.new(0, 6)
+        GetCorner.Parent = GetKeyBtn
+
+        -- Action Submit Key
+        SubmitBtn.MouseButton1Click:Connect(function()
+            if KeyBox.Text == correctKey then
+                Hibatzzz:Notification({
+                    Title = "Key System",
+                    Description = "Correct Key! Access Granted.",
+                    Duration = 2
+                })
+                KeyFrame:Destroy()
+                MainFrame.Visible = true
+            else
+                Hibatzzz:Notification({
+                    Title = "Key System",
+                    Description = "Invalid Key! Please try again.",
+                    Duration = 2
+                })
+            end
+        end)
+
+        -- Action Copy Link Key
+        GetKeyBtn.MouseButton1Click:Connect(function()
+            if setclipboard then
+                setclipboard(keyLink)
+                Hibatzzz:Notification({
+                    Title = "Key System",
+                    Description = "Key Link copied to clipboard!",
+                    Duration = 2
+                })
+            else
+                Hibatzzz:Notification({
+                    Title = "Key System",
+                    Description = "Clipboard function not supported by executor.",
+                    Duration = 2
+                })
+            end
+        end)
+    end
+
+    -- Header UI
+    local Header = Instance.new("Frame")
+    Header.Name = "Header"
+    Header.Size = UDim2.new(1, 0, 0, 40)
+    Header.BackgroundTransparency = 1
+    Header.Parent = MainFrame
+
+    local textOffset = 12
+    if hubIcon ~= "" then
+        local TitleIcon = Instance.new("ImageLabel")
+        TitleIcon.Size = UDim2.new(0, 22, 0, 22)
+        TitleIcon.Position = UDim2.new(0, 10, 0, 9)
+        TitleIcon.BackgroundTransparency = 1
+        TitleIcon.Image = hubIcon
+        TitleIcon.Parent = Header
+        textOffset = 38
+    end
+
+    local Title = Instance.new("TextLabel")
+    Title.Size = UDim2.new(1, -(textOffset + 40), 0, 20)
+    Title.Position = UDim2.new(0, textOffset, 0, 4)
+    Title.Text = hubTitle
+    Title.TextColor3 = Color3.fromRGB(240, 240, 245)
+    Title.TextSize = 14
+    Title.Font = Enum.Font.GothamBold
+    Title.TextXAlignment = Enum.TextXAlignment.Left
+    Title.BackgroundTransparency = 1
+    Title.Parent = Header
+
+    local Subtitle = Instance.new("TextLabel")
+    Subtitle.Size = UDim2.new(1, -(textOffset + 40), 0, 14)
+    Subtitle.Position = UDim2.new(0, textOffset, 0, 22)
+    Subtitle.Text = hubSubtitle
+    Subtitle.TextColor3 = Color3.fromRGB(120, 120, 140)
+    Subtitle.TextSize = 10
+    Subtitle.Font = Enum.Font.Gotham
+    Subtitle.TextXAlignment = Enum.TextXAlignment.Left
+    Subtitle.BackgroundTransparency = 1
+    Subtitle.Parent = Header
+
+    local CloseBtn = Instance.new("TextButton")
+    CloseBtn.Size = UDim2.new(0, 26, 0, 26)
+    CloseBtn.Position = UDim2.new(1, -32, 0, 7)
+    CloseBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+    CloseBtn.Text = "X"
+    CloseBtn.TextColor3 = Color3.fromRGB(255, 80, 80)
+    CloseBtn.Font = Enum.Font.GothamBold
+    CloseBtn.TextSize = 12
+    CloseBtn.Parent = Header
+
+    local CloseCorner = Instance.new("UICorner")
+    CloseCorner.CornerRadius = UDim.new(0, 6)
+    CloseCorner.Parent = CloseBtn
+
+    CloseBtn.MouseButton1Click:Connect(function()
+        MainFrame.Visible = false
+        OpenBtn.Visible = true
+    end)
+
+    OpenBtn.MouseButton1Click:Connect(function()
+        MainFrame.Visible = true
+        OpenBtn.Visible = false
+    end)
+
+    local TabBar = Instance.new("ScrollingFrame")
+    TabBar.Size = UDim2.new(1, -20, 0, 28)
+    TabBar.Position = UDim2.new(0, 10, 0, 40)
+    TabBar.BackgroundTransparency = 1
+    TabBar.BorderSizePixel = 0
+    TabBar.ScrollBarThickness = 0
+    TabBar.CanvasSize = UDim2.new(0, 0, 0, 0)
+    TabBar.Parent = MainFrame
+
+    local TabListLayout = Instance.new("UIListLayout")
+    TabListLayout.FillDirection = Enum.FillDirection.Horizontal
+    TabListLayout.Padding = UDim.new(0, 6)
+    TabListLayout.Parent = TabBar
+
+    TabListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        TabBar.CanvasSize = UDim2.new(0, TabListLayout.AbsoluteContentSize.X, 0, 0)
+    end)
+
+    local ContentContainer = Instance.new("Frame")
+    ContentContainer.Size = UDim2.new(1, -20, 1, -78)
+    ContentContainer.Position = UDim2.new(0, 10, 0, 72)
+    ContentContainer.BackgroundTransparency = 1
+    ContentContainer.Parent = MainFrame
+
+    function Window:CreateTab(tabName, tabIcon)
+        if Window.CreatedTabs[tabName] then
+            return Window.CreatedTabs[tabName]
+        end
+
+        local Tab = {}
+        tabIcon = tabIcon or ""
+
+        local TabButton = Instance.new("TextButton")
+        TabButton.Size = UDim2.new(0, 95, 1, 0)
+        TabButton.BackgroundColor3 = Color3.fromRGB(24, 24, 32)
+        TabButton.Text = ""
+        TabButton.Parent = TabBar
+
+        local TabBtnCorner = Instance.new("UICorner")
+        TabBtnCorner.CornerRadius = UDim.new(0, 6)
+        TabBtnCorner.Parent = TabButton
+
+        local LabelXOffset = 0
+        if tabIcon ~= "" then
+            local IconImg = Instance.new("ImageLabel")
+            IconImg.Size = UDim2.new(0, 14, 0, 14)
+            IconImg.Position = UDim2.new(0, 8, 0.5, -7)
+            IconImg.BackgroundTransparency = 1
+            IconImg.Image = tabIcon
+            IconImg.Parent = TabButton
+            LabelXOffset = 12
+        end
+
+        local TabTitle = Instance.new("TextLabel")
+        TabTitle.Size = UDim2.new(1, -LabelXOffset, 1, 0)
+        TabTitle.Position = UDim2.new(0, LabelXOffset, 0, 0)
+        TabTitle.BackgroundTransparency = 1
+        TabTitle.Text = tabName
+        TabTitle.TextColor3 = Color3.fromRGB(140, 140, 160)
+        TabTitle.Font = Enum.Font.GothamMedium
+        TabTitle.TextSize = 11
+        TabTitle.Parent = TabButton
+
+        local TabPage = Instance.new("ScrollingFrame")
+        TabPage.Name = tabName .. "Page"
+        TabPage.Size = UDim2.new(1, 0, 1, 0)
+        TabPage.BackgroundTransparency = 1
+        TabPage.BorderSizePixel = 0
+        TabPage.ScrollBarThickness = 2
+        TabPage.ScrollBarImageColor3 = Color3.fromRGB(60, 60, 80)
+        TabPage.Visible = false
+        TabPage.Parent = ContentContainer
+
+        local PageListLayout = Instance.new("UIListLayout")
+        PageListLayout.Padding = UDim.new(0, 6)
+        PageListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+        PageListLayout.Parent = TabPage
+
+        PageListLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+            TabPage.CanvasSize = UDim2.new(0, 0, 0, PageListLayout.AbsoluteContentSize.Y + 10)
+        end)
+
+        local function SelectTab()
+            for _, t in pairs(Window.Tabs) do
+                t.Page.Visible = false
+                TweenService:Create(t.Button, TweenInfo.new(0.15), { BackgroundColor3 = Color3.fromRGB(24, 24, 32) }):Play()
+                t.Text.TextColor3 = Color3.fromRGB(140, 140, 160)
+            end
+            TabPage.Visible = true
+            TweenService:Create(TabButton, TweenInfo.new(0.15), { BackgroundColor3 = Color3.fromRGB(40, 40, 58) }):Play()
+            TabTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+        end
+
+        TabButton.MouseButton1Click:Connect(SelectTab)
+        table.insert(Window.Tabs, {Button = TabButton, Text = TabTitle, Page = TabPage})
+
+        if #Window.Tabs == 1 then SelectTab() end
+
+        Tab.Page = TabPage
+        Window.CreatedTabs[tabName] = Tab
+        return Tab
+    end
+
+    function Window:AddFeature(config)
+        local featureName = config.Feature or "Unnamed Feature"
+        local targetTabName = config.Tab or "Main"
+        local isLoop = string.lower(tostring(config.loop or config.Loop or "no")) == "yes"
+        local autoNotif = string.lower(tostring(config["Auto Notif"] or config.AutoNotif or "no")) == "yes"
+        local systemCallback = config["System Feature"] or function() end
+
+        local TabObj = Window:CreateTab(targetTabName)
+
+        local Button = Instance.new("TextButton")
+        Button.Size = UDim2.new(1, 0, 0, 32)
+        Button.BackgroundColor3 = Color3.fromRGB(28, 28, 38)
+        Button.Text = isLoop and (featureName .. " [OFF]") or featureName
+        Button.TextColor3 = isLoop and Color3.fromRGB(180, 180, 190) or Color3.fromRGB(220, 220, 235)
+        Button.Font = Enum.Font.GothamMedium
+        Button.TextSize = 12
+        Button.AutoButtonColor = false
+        Button.Parent = TabObj.Page
+
+        local BtnCorner = Instance.new("UICorner")
+        BtnCorner.CornerRadius = UDim.new(0, 6)
+        BtnCorner.Parent = Button
+
+        local BtnStroke = Instance.new("UIStroke")
+        BtnStroke.Color = Color3.fromRGB(50, 50, 65)
+        BtnStroke.Thickness = 1
+        BtnStroke.Parent = Button
+
+        if not isLoop then
+            Button.MouseButton1Click:Connect(function()
+                TweenService:Create(Button, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(45, 45, 65)}):Play()
+                task.delay(0.15, function()
+                    TweenService:Create(Button, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(28, 28, 38)}):Play()
+                end)
+
+                if autoNotif then
+                    Hibatzzz:Notification({
+                        Title = featureName,
+                        Description = featureName .. " dipencet!",
+                        Duration = 2
+                    })
+                end
+
+                pcall(systemCallback)
+            end)
+        else
+            local toggled = false
+            Button.MouseButton1Click:Connect(function()
+                toggled = not toggled
+
+                if toggled then
+                    Button.Text = featureName .. " [ON]"
+                    Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+                    TweenService:Create(Button, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(0, 140, 90)}):Play()
+                    BtnStroke.Color = Color3.fromRGB(0, 200, 130)
+
+                    if autoNotif then
+                        Hibatzzz:Notification({
+                            Title = featureName,
+                            Description = featureName .. " ON",
+                            Duration = 2
+                        })
+                    end
+
+                    task.spawn(function()
+                        while toggled do
+                            pcall(systemCallback)
+                            task.wait(0.1)
+                        end
+                    end)
+                else
+                    Button.Text = featureName .. " [OFF]"
+                    Button.TextColor3 = Color3.fromRGB(180, 180, 190)
+                    TweenService:Create(Button, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(28, 28, 38)}):Play()
+                    BtnStroke.Color = Color3.fromRGB(50, 50, 65)
+
+                    if autoNotif then
+                        Hibatzzz:Notification({
+                            Title = featureName,
+                            Description = featureName .. " OFF",
+                            Duration = 2
+                        })
+                    end
+                end
+            end)
+        end
+    end
+
+    function Window:AddDropdown(config)
+        config = config or {}
+        local dropName = config.Name or config.Title or "Dropdown"
+        local targetTabName = config.Tab or "Main"
+        local options = config.Options or {}
+        local defaultOpt = config.Default or options[1] or "Select..."
+        local autoNotif = string.lower(tostring(config["Auto Notif"] or config.AutoNotif or "no")) == "yes"
+        local callback = config.Callback or config["System Feature"] or function() end
+
+        local TabObj = Window:CreateTab(targetTabName)
+
+        local DropFrame = Instance.new("Frame")
+        DropFrame.Name = "DropdownFrame"
+        DropFrame.Size = UDim2.new(1, 0, 0, 32)
+        DropFrame.BackgroundColor3 = Color3.fromRGB(28, 28, 38)
+        DropFrame.ClipsDescendants = true
+        DropFrame.Parent = TabObj.Page
+
+        local DropCorner = Instance.new("UICorner")
+        DropCorner.CornerRadius = UDim.new(0, 6)
+        DropCorner.Parent = DropFrame
+
+        local DropStroke = Instance.new("UIStroke")
+        DropStroke.Color = Color3.fromRGB(50, 50, 65)
+        DropStroke.Thickness = 1
+        DropStroke.Parent = DropFrame
+
+        local DropHeader = Instance.new("TextButton")
+        DropHeader.Size = UDim2.new(1, 0, 0, 32)
+        DropHeader.BackgroundTransparency = 1
+        DropHeader.Text = ""
+        DropHeader.Parent = DropFrame
+
+        local TitleLbl = Instance.new("TextLabel")
+        TitleLbl.Size = UDim2.new(0.5, -10, 1, 0)
+        TitleLbl.Position = UDim2.new(0, 10, 0, 0)
+        TitleLbl.Text = dropName
+        TitleLbl.TextColor3 = Color3.fromRGB(220, 220, 235)
+        TitleLbl.Font = Enum.Font.GothamMedium
+        TitleLbl.TextSize = 12
+        TitleLbl.TextXAlignment = Enum.TextXAlignment.Left
+        TitleLbl.BackgroundTransparency = 1
+        TitleLbl.Parent = DropHeader
+
+        local SelectedLbl = Instance.new("TextLabel")
+        SelectedLbl.Size = UDim2.new(0.5, -25, 1, 0)
+        SelectedLbl.Position = UDim2.new(0.5, 0, 0, 0)
+        SelectedLbl.Text = defaultOpt .. " v"
+        SelectedLbl.TextColor3 = Color3.fromRGB(0, 180, 120)
+        SelectedLbl.Font = Enum.Font.Gotham
+        SelectedLbl.TextSize = 11
+        SelectedLbl.TextXAlignment = Enum.TextXAlignment.Right
+        SelectedLbl.BackgroundTransparency = 1
+        SelectedLbl.Parent = DropHeader
+
+        local OptionHolder = Instance.new("Frame")
+        OptionHolder.Size = UDim2.new(1, -16, 0, 0)
+        OptionHolder.Position = UDim2.new(0, 8, 0, 32)
+        OptionHolder.BackgroundTransparency = 1
+        OptionHolder.Parent = DropFrame
+
+        local OptionLayout = Instance.new("UIListLayout")
+        OptionLayout.Padding = UDim.new(0, 4)
+        OptionLayout.Parent = OptionHolder
+
+        local isExpanded = false
+
+        local function RefreshSize()
+            if isExpanded then
+                local contentHeight = OptionLayout.AbsoluteContentSize.Y + 40
+                TweenService:Create(DropFrame, TweenInfo.new(0.2), {Size = UDim2.new(1, 0, 0, contentHeight)}):Play()
+            else
+                TweenService:Create(DropFrame, TweenInfo.new(0.2), {Size = UDim2.new(1, 0, 0, 32)}):Play()
+            end
+        end
+
+        DropHeader.MouseButton1Click:Connect(function()
+            isExpanded = not isExpanded
+            SelectedLbl.Text = defaultOpt .. (isExpanded and " ^" or " v")
+            RefreshSize()
+        end)
+
+        local function PopulateOptions(list)
+            for _, child in pairs(OptionHolder:GetChildren()) do
+                if child:IsA("TextButton") then child:Destroy() end
+            end
+
+            for _, opt in ipairs(list) do
+                local OptBtn = Instance.new("TextButton")
+                OptBtn.Size = UDim2.new(1, 0, 0, 26)
+                OptBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 28)
+                OptBtn.Text = opt
+                OptBtn.TextColor3 = Color3.fromRGB(180, 180, 190)
+                OptBtn.Font = Enum.Font.Gotham
+                OptBtn.TextSize = 11
+                OptBtn.Parent = OptionHolder
+
+                local OptCorner = Instance.new("UICorner")
+                OptCorner.CornerRadius = UDim.new(0, 4)
+                OptCorner.Parent = OptBtn
+
+                OptBtn.MouseButton1Click:Connect(function()
+                    defaultOpt = opt
+                    SelectedLbl.Text = opt .. " v"
+                    isExpanded = false
+                    RefreshSize()
+
+                    if autoNotif then
+                        Hibatzzz:Notification({
+                            Title = dropName,
+                            Description = "Selected: " .. opt,
+                            Duration = 2
+                        })
+                    end
+
+                    pcall(callback, opt)
+                end)
+            end
+        end
+
+        PopulateOptions(options)
+
+        return {
+            Refresh = function(_, newList)
+                options = newList
+                PopulateOptions(newList)
+            end
+        }
+    end
+
+    return Window
+end
+
+return Hibatzzz
+
