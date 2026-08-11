@@ -9,7 +9,7 @@ if CoreGui:FindFirstChild("HibatzzzUIFrame") then
 end
 
 -- ==========================================
--- LIST THEME (4 TEMA DIFFERENT)
+-- LIST THEMES
 -- ==========================================
 local Themes = {
     ["Default"] = {
@@ -19,7 +19,8 @@ local Themes = {
         Accent = Color3.fromRGB(0, 180, 120),
         AccentActive = Color3.fromRGB(0, 200, 130),
         Text = Color3.fromRGB(240, 240, 255),
-        TextSub = Color3.fromRGB(140, 140, 160)
+        TextSub = Color3.fromRGB(140, 140, 160),
+        LoadText = Color3.fromRGB(0, 220, 150)
     },
     ["Neon Mint"] = {
         MainBg = Color3.fromRGB(10, 22, 20),
@@ -28,7 +29,8 @@ local Themes = {
         Accent = Color3.fromRGB(0, 230, 160),
         AccentActive = Color3.fromRGB(0, 255, 180),
         Text = Color3.fromRGB(230, 255, 250),
-        TextSub = Color3.fromRGB(120, 180, 165)
+        TextSub = Color3.fromRGB(120, 180, 165),
+        LoadText = Color3.fromRGB(0, 255, 180)
     },
     ["Crimson Red"] = {
         MainBg = Color3.fromRGB(20, 10, 12),
@@ -37,7 +39,8 @@ local Themes = {
         Accent = Color3.fromRGB(220, 40, 60),
         AccentActive = Color3.fromRGB(255, 60, 80),
         Text = Color3.fromRGB(255, 230, 235),
-        TextSub = Color3.fromRGB(170, 120, 130)
+        TextSub = Color3.fromRGB(170, 120, 130),
+        LoadText = Color3.fromRGB(255, 80, 100)
     },
     ["Purple Abyss"] = {
         MainBg = Color3.fromRGB(16, 12, 24),
@@ -46,7 +49,8 @@ local Themes = {
         Accent = Color3.fromRGB(140, 60, 230),
         AccentActive = Color3.fromRGB(160, 80, 255),
         Text = Color3.fromRGB(245, 235, 255),
-        TextSub = Color3.fromRGB(150, 135, 175)
+        TextSub = Color3.fromRGB(150, 135, 175),
+        LoadText = Color3.fromRGB(180, 100, 255)
     }
 }
 
@@ -155,12 +159,11 @@ function Hibatzzz.CreateWindow(config)
     config = config or {}
     local hubTitle = config.Title or "UI Hub"
     local hubSubtitle = config.SubTitle or "Mobile Edition"
+    local loadTextString = config.LoadText or config.LoadTextString or "● Status: Script Loaded Successfully"
     local hubIcon = config.Icon or ""
     
     local useKeySystem = config.KeySystem or false
     local themeName = config.Theme or "Default"
-    
-    -- AUTO-FALLBACK KE DEFAULT KALO THEME NYA GAK ADA
     local currentTheme = Themes[themeName] or Themes["Default"]
 
     local keySettings = config.KeySettings or {}
@@ -173,10 +176,11 @@ function Hibatzzz.CreateWindow(config)
         Hibatzzz:Notification(cfg, currentTheme)
     end
 
+    -- Ukuran Frame Utama Ditingkatkan Dikit Biar LoadText Muat Rapi
     local MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
-    MainFrame.Size = UDim2.new(0, 360, 0, 270)
-    MainFrame.Position = UDim2.new(0.5, -180, 0.5, -135)
+    MainFrame.Size = UDim2.new(0, 360, 0, 285)
+    MainFrame.Position = UDim2.new(0.5, -180, 0.5, -142)
     MainFrame.BackgroundColor3 = currentTheme.MainBg
     MainFrame.BorderSizePixel = 0
     MainFrame.Active = true
@@ -336,9 +340,10 @@ function Hibatzzz.CreateWindow(config)
         end)
     end
 
+    -- HEADER UI
     local Header = Instance.new("Frame")
     Header.Name = "Header"
-    Header.Size = UDim2.new(1, 0, 0, 40)
+    Header.Size = UDim2.new(1, 0, 0, 52)
     Header.BackgroundTransparency = 1
     Header.Parent = MainFrame
 
@@ -346,7 +351,7 @@ function Hibatzzz.CreateWindow(config)
     if hubIcon ~= "" then
         local TitleIcon = Instance.new("ImageLabel")
         TitleIcon.Size = UDim2.new(0, 22, 0, 22)
-        TitleIcon.Position = UDim2.new(0, 10, 0, 9)
+        TitleIcon.Position = UDim2.new(0, 10, 0, 10)
         TitleIcon.BackgroundTransparency = 1
         TitleIcon.Image = hubIcon
         TitleIcon.Parent = Header
@@ -354,11 +359,11 @@ function Hibatzzz.CreateWindow(config)
     end
 
     local Title = Instance.new("TextLabel")
-    Title.Size = UDim2.new(1, -(textOffset + 40), 0, 20)
+    Title.Size = UDim2.new(1, -(textOffset + 40), 0, 18)
     Title.Position = UDim2.new(0, textOffset, 0, 4)
     Title.Text = hubTitle
     Title.TextColor3 = currentTheme.Text
-    Title.TextSize = 14
+    Title.TextSize = 13
     Title.Font = Enum.Font.GothamBold
     Title.TextXAlignment = Enum.TextXAlignment.Left
     Title.BackgroundTransparency = 1
@@ -366,18 +371,30 @@ function Hibatzzz.CreateWindow(config)
 
     local Subtitle = Instance.new("TextLabel")
     Subtitle.Size = UDim2.new(1, -(textOffset + 40), 0, 14)
-    Subtitle.Position = UDim2.new(0, textOffset, 0, 22)
+    Subtitle.Position = UDim2.new(0, textOffset, 0, 20)
     Subtitle.Text = hubSubtitle
     Subtitle.TextColor3 = currentTheme.TextSub
-    Subtitle.TextSize = 10
+    Subtitle.TextSize = 9
     Subtitle.Font = Enum.Font.Gotham
     Subtitle.TextXAlignment = Enum.TextXAlignment.Left
     Subtitle.BackgroundTransparency = 1
     Subtitle.Parent = Header
 
+    -- LOAD TEXT STATUS LABEL (DI BAWAH TITLE & SUBTITLE)
+    local LoadTextLabel = Instance.new("TextLabel")
+    LoadTextLabel.Size = UDim2.new(1, -(textOffset + 40), 0, 14)
+    LoadTextLabel.Position = UDim2.new(0, textOffset, 0, 34)
+    LoadTextLabel.Text = loadTextString
+    LoadTextLabel.TextColor3 = currentTheme.LoadText
+    LoadTextLabel.TextSize = 9
+    LoadTextLabel.Font = Enum.Font.GothamMedium
+    LoadTextLabel.TextXAlignment = Enum.TextXAlignment.Left
+    LoadTextLabel.BackgroundTransparency = 1
+    LoadTextLabel.Parent = Header
+
     local CloseBtn = Instance.new("TextButton")
     CloseBtn.Size = UDim2.new(0, 26, 0, 26)
-    CloseBtn.Position = UDim2.new(1, -32, 0, 7)
+    CloseBtn.Position = UDim2.new(1, -32, 0, 8)
     CloseBtn.BackgroundColor3 = currentTheme.CardBg
     CloseBtn.Text = "X"
     CloseBtn.TextColor3 = Color3.fromRGB(255, 80, 80)
@@ -401,7 +418,7 @@ function Hibatzzz.CreateWindow(config)
 
     local TabBar = Instance.new("ScrollingFrame")
     TabBar.Size = UDim2.new(1, -20, 0, 28)
-    TabBar.Position = UDim2.new(0, 10, 0, 40)
+    TabBar.Position = UDim2.new(0, 10, 0, 54)
     TabBar.BackgroundTransparency = 1
     TabBar.BorderSizePixel = 0
     TabBar.ScrollBarThickness = 0
@@ -418,8 +435,8 @@ function Hibatzzz.CreateWindow(config)
     end)
 
     local ContentContainer = Instance.new("Frame")
-    ContentContainer.Size = UDim2.new(1, -20, 1, -78)
-    ContentContainer.Position = UDim2.new(0, 10, 0, 72)
+    ContentContainer.Size = UDim2.new(1, -20, 1, -92)
+    ContentContainer.Position = UDim2.new(0, 10, 0, 86)
     ContentContainer.BackgroundTransparency = 1
     ContentContainer.Parent = MainFrame
 
