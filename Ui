@@ -8,6 +8,48 @@ if CoreGui:FindFirstChild("HibatzzzUIFrame") then
     CoreGui.HibatzzzUIFrame:Destroy()
 end
 
+-- ==========================================
+-- LIST THEME (4 TEMA DIFFERENT)
+-- ==========================================
+local Themes = {
+    ["Default"] = {
+        MainBg = Color3.fromRGB(16, 16, 22),
+        CardBg = Color3.fromRGB(28, 28, 38),
+        Stroke = Color3.fromRGB(40, 40, 55),
+        Accent = Color3.fromRGB(0, 180, 120),
+        AccentActive = Color3.fromRGB(0, 200, 130),
+        Text = Color3.fromRGB(240, 240, 255),
+        TextSub = Color3.fromRGB(140, 140, 160)
+    },
+    ["Neon Mint"] = {
+        MainBg = Color3.fromRGB(10, 22, 20),
+        CardBg = Color3.fromRGB(18, 36, 32),
+        Stroke = Color3.fromRGB(25, 60, 50),
+        Accent = Color3.fromRGB(0, 230, 160),
+        AccentActive = Color3.fromRGB(0, 255, 180),
+        Text = Color3.fromRGB(230, 255, 250),
+        TextSub = Color3.fromRGB(120, 180, 165)
+    },
+    ["Crimson Red"] = {
+        MainBg = Color3.fromRGB(20, 10, 12),
+        CardBg = Color3.fromRGB(32, 18, 20),
+        Stroke = Color3.fromRGB(60, 25, 30),
+        Accent = Color3.fromRGB(220, 40, 60),
+        AccentActive = Color3.fromRGB(255, 60, 80),
+        Text = Color3.fromRGB(255, 230, 235),
+        TextSub = Color3.fromRGB(170, 120, 130)
+    },
+    ["Purple Abyss"] = {
+        MainBg = Color3.fromRGB(16, 12, 24),
+        CardBg = Color3.fromRGB(26, 20, 40),
+        Stroke = Color3.fromRGB(50, 35, 75),
+        Accent = Color3.fromRGB(140, 60, 230),
+        AccentActive = Color3.fromRGB(160, 80, 255),
+        Text = Color3.fromRGB(245, 235, 255),
+        TextSub = Color3.fromRGB(150, 135, 175)
+    }
+}
+
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "HibatzzzUIFrame"
 ScreenGui.ResetOnSpawn = false
@@ -22,7 +64,6 @@ else
     ScreenGui.Parent = CoreGui
 end
 
--- Container Notifikasi
 local NotifContainer = Instance.new("Frame")
 NotifContainer.Name = "NotifContainer"
 NotifContainer.Size = UDim2.new(0, 220, 1, -20)
@@ -35,8 +76,9 @@ NotifLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
 NotifLayout.Padding = UDim.new(0, 8)
 NotifLayout.Parent = NotifContainer
 
-function Hibatzzz:Notification(config)
+function Hibatzzz:Notification(config, activeTheme)
     config = config or {}
+    activeTheme = activeTheme or Themes["Default"]
     local title = config.Title or "Notification"
     local desc = config.Description or "Hello World!"
     local duration = config.Duration or 2.5
@@ -53,7 +95,7 @@ function Hibatzzz:Notification(config)
     local NotifFrame = Instance.new("Frame")
     NotifFrame.Name = "Notification"
     NotifFrame.Size = UDim2.new(1, 0, 0, 50)
-    NotifFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 28)
+    NotifFrame.BackgroundColor3 = activeTheme.CardBg
     NotifFrame.BackgroundTransparency = 1
     NotifFrame.Parent = NotifContainer
 
@@ -62,7 +104,7 @@ function Hibatzzz:Notification(config)
     NotifCorner.Parent = NotifFrame
 
     local NotifStroke = Instance.new("UIStroke")
-    NotifStroke.Color = Color3.fromRGB(0, 180, 120)
+    NotifStroke.Color = activeTheme.Accent
     NotifStroke.Thickness = 1.2
     NotifStroke.Transparency = 1
     NotifStroke.Parent = NotifFrame
@@ -71,7 +113,7 @@ function Hibatzzz:Notification(config)
     TitleLbl.Size = UDim2.new(1, -16, 0, 18)
     TitleLbl.Position = UDim2.new(0, 8, 0, 4)
     TitleLbl.Text = title
-    TitleLbl.TextColor3 = Color3.fromRGB(240, 240, 255)
+    TitleLbl.TextColor3 = activeTheme.Text
     TitleLbl.Font = Enum.Font.GothamBold
     TitleLbl.TextSize = 11
     TitleLbl.TextXAlignment = Enum.TextXAlignment.Left
@@ -83,7 +125,7 @@ function Hibatzzz:Notification(config)
     DescLbl.Size = UDim2.new(1, -16, 0, 24)
     DescLbl.Position = UDim2.new(0, 8, 0, 20)
     DescLbl.Text = desc
-    DescLbl.TextColor3 = Color3.fromRGB(160, 160, 180)
+    DescLbl.TextColor3 = activeTheme.TextSub
     DescLbl.Font = Enum.Font.Gotham
     DescLbl.TextSize = 10
     DescLbl.TextXAlignment = Enum.TextXAlignment.Left
@@ -116,6 +158,11 @@ function Hibatzzz.CreateWindow(config)
     local hubIcon = config.Icon or ""
     
     local useKeySystem = config.KeySystem or false
+    local themeName = config.Theme or "Default"
+    
+    -- AUTO-FALLBACK KE DEFAULT KALO THEME NYA GAK ADA
+    local currentTheme = Themes[themeName] or Themes["Default"]
+
     local keySettings = config.KeySettings or {}
     local correctKey = keySettings.Key or "Hibatzzz123"
     local keyLink = keySettings.KeyLink or "https://link-to-get-key.com"
@@ -123,14 +170,14 @@ function Hibatzzz.CreateWindow(config)
     local Window = { Tabs = {}, CreatedTabs = {} }
 
     function Window:Notification(cfg)
-        Hibatzzz:Notification(cfg)
+        Hibatzzz:Notification(cfg, currentTheme)
     end
 
     local MainFrame = Instance.new("Frame")
     MainFrame.Name = "MainFrame"
     MainFrame.Size = UDim2.new(0, 360, 0, 270)
     MainFrame.Position = UDim2.new(0.5, -180, 0.5, -135)
-    MainFrame.BackgroundColor3 = Color3.fromRGB(16, 16, 22)
+    MainFrame.BackgroundColor3 = currentTheme.MainBg
     MainFrame.BorderSizePixel = 0
     MainFrame.Active = true
     MainFrame.Draggable = true
@@ -142,7 +189,7 @@ function Hibatzzz.CreateWindow(config)
     UICorner.Parent = MainFrame
 
     local UIStroke = Instance.new("UIStroke")
-    UIStroke.Color = Color3.fromRGB(40, 40, 55)
+    UIStroke.Color = currentTheme.Stroke
     UIStroke.Thickness = 1.5
     UIStroke.Parent = MainFrame
 
@@ -150,9 +197,9 @@ function Hibatzzz.CreateWindow(config)
     OpenBtn.Name = "OpenHibatzzzBtn"
     OpenBtn.Size = UDim2.new(0, 110, 0, 35)
     OpenBtn.Position = UDim2.new(0.02, 0, 0.2, 0)
-    OpenBtn.BackgroundColor3 = Color3.fromRGB(22, 22, 30)
+    OpenBtn.BackgroundColor3 = currentTheme.MainBg
     OpenBtn.Text = "Open Hibatzzz"
-    OpenBtn.TextColor3 = Color3.fromRGB(240, 240, 255)
+    OpenBtn.TextColor3 = currentTheme.Text
     OpenBtn.Font = Enum.Font.GothamBold
     OpenBtn.TextSize = 11
     OpenBtn.Visible = false
@@ -165,7 +212,7 @@ function Hibatzzz.CreateWindow(config)
     OpenCorner.Parent = OpenBtn
 
     local OpenStroke = Instance.new("UIStroke")
-    OpenStroke.Color = Color3.fromRGB(0, 180, 120)
+    OpenStroke.Color = currentTheme.Accent
     OpenStroke.Thickness = 1.5
     OpenStroke.Parent = OpenBtn
 
@@ -175,7 +222,7 @@ function Hibatzzz.CreateWindow(config)
         KeyFrame.Name = "KeyFrame"
         KeyFrame.Size = UDim2.new(0, 300, 0, 180)
         KeyFrame.Position = UDim2.new(0.5, -150, 0.5, -90)
-        KeyFrame.BackgroundColor3 = Color3.fromRGB(16, 16, 22)
+        KeyFrame.BackgroundColor3 = currentTheme.MainBg
         KeyFrame.BorderSizePixel = 0
         KeyFrame.Active = true
         KeyFrame.Draggable = true
@@ -186,7 +233,7 @@ function Hibatzzz.CreateWindow(config)
         KeyCorner.Parent = KeyFrame
 
         local KeyStroke = Instance.new("UIStroke")
-        KeyStroke.Color = Color3.fromRGB(0, 180, 120)
+        KeyStroke.Color = currentTheme.Accent
         KeyStroke.Thickness = 1.5
         KeyStroke.Parent = KeyFrame
 
@@ -194,7 +241,7 @@ function Hibatzzz.CreateWindow(config)
         KeyTitle.Size = UDim2.new(1, 0, 0, 30)
         KeyTitle.Position = UDim2.new(0, 0, 0, 10)
         KeyTitle.Text = hubTitle .. " - Key System"
-        KeyTitle.TextColor3 = Color3.fromRGB(240, 240, 255)
+        KeyTitle.TextColor3 = currentTheme.Text
         KeyTitle.Font = Enum.Font.GothamBold
         KeyTitle.TextSize = 14
         KeyTitle.BackgroundTransparency = 1
@@ -204,7 +251,7 @@ function Hibatzzz.CreateWindow(config)
         KeySub.Size = UDim2.new(1, -20, 0, 20)
         KeySub.Position = UDim2.new(0, 10, 0, 35)
         KeySub.Text = "Please enter the key to access the script."
-        KeySub.TextColor3 = Color3.fromRGB(140, 140, 160)
+        KeySub.TextColor3 = currentTheme.TextSub
         KeySub.Font = Enum.Font.Gotham
         KeySub.TextSize = 10
         KeySub.BackgroundTransparency = 1
@@ -213,11 +260,11 @@ function Hibatzzz.CreateWindow(config)
         local KeyBox = Instance.new("TextBox")
         KeyBox.Size = UDim2.new(1, -40, 0, 35)
         KeyBox.Position = UDim2.new(0, 20, 0, 65)
-        KeyBox.BackgroundColor3 = Color3.fromRGB(24, 24, 32)
+        KeyBox.BackgroundColor3 = currentTheme.CardBg
         KeyBox.Text = ""
         KeyBox.PlaceholderText = "Enter Key Here..."
-        KeyBox.PlaceholderColor3 = Color3.fromRGB(100, 100, 120)
-        KeyBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+        KeyBox.PlaceholderColor3 = currentTheme.TextSub
+        KeyBox.TextColor3 = currentTheme.Text
         KeyBox.Font = Enum.Font.GothamMedium
         KeyBox.TextSize = 11
         KeyBox.Parent = KeyFrame
@@ -227,16 +274,16 @@ function Hibatzzz.CreateWindow(config)
         BoxCorner.Parent = KeyBox
 
         local BoxStroke = Instance.new("UIStroke")
-        BoxStroke.Color = Color3.fromRGB(40, 40, 55)
+        BoxStroke.Color = currentTheme.Stroke
         BoxStroke.Thickness = 1
         BoxStroke.Parent = KeyBox
 
         local SubmitBtn = Instance.new("TextButton")
         SubmitBtn.Size = UDim2.new(0.43, 0, 0, 32)
         SubmitBtn.Position = UDim2.new(0, 20, 0, 120)
-        SubmitBtn.BackgroundColor3 = Color3.fromRGB(0, 140, 90)
+        SubmitBtn.BackgroundColor3 = currentTheme.Accent
         SubmitBtn.Text = "Check Key"
-        SubmitBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        SubmitBtn.TextColor3 = currentTheme.Text
         SubmitBtn.Font = Enum.Font.GothamBold
         SubmitBtn.TextSize = 11
         SubmitBtn.Parent = KeyFrame
@@ -248,9 +295,9 @@ function Hibatzzz.CreateWindow(config)
         local GetKeyBtn = Instance.new("TextButton")
         GetKeyBtn.Size = UDim2.new(0.43, 0, 0, 32)
         GetKeyBtn.Position = UDim2.new(0.57, -20, 0, 120)
-        GetKeyBtn.BackgroundColor3 = Color3.fromRGB(28, 28, 38)
+        GetKeyBtn.BackgroundColor3 = currentTheme.CardBg
         GetKeyBtn.Text = "Get Key"
-        GetKeyBtn.TextColor3 = Color3.fromRGB(200, 200, 220)
+        GetKeyBtn.TextColor3 = currentTheme.TextSub
         GetKeyBtn.Font = Enum.Font.GothamBold
         GetKeyBtn.TextSize = 11
         GetKeyBtn.Parent = KeyFrame
@@ -261,7 +308,7 @@ function Hibatzzz.CreateWindow(config)
 
         SubmitBtn.MouseButton1Click:Connect(function()
             if KeyBox.Text == correctKey then
-                Hibatzzz:Notification({
+                Window:Notification({
                     Title = "Key System",
                     Description = "Correct Key! Access Granted.",
                     Duration = 2
@@ -269,7 +316,7 @@ function Hibatzzz.CreateWindow(config)
                 KeyFrame:Destroy()
                 MainFrame.Visible = true
             else
-                Hibatzzz:Notification({
+                Window:Notification({
                     Title = "Key System",
                     Description = "Invalid Key! Please try again.",
                     Duration = 2
@@ -280,7 +327,7 @@ function Hibatzzz.CreateWindow(config)
         GetKeyBtn.MouseButton1Click:Connect(function()
             if setclipboard then
                 setclipboard(keyLink)
-                Hibatzzz:Notification({
+                Window:Notification({
                     Title = "Key System",
                     Description = "Key Link copied to clipboard!",
                     Duration = 2
@@ -310,7 +357,7 @@ function Hibatzzz.CreateWindow(config)
     Title.Size = UDim2.new(1, -(textOffset + 40), 0, 20)
     Title.Position = UDim2.new(0, textOffset, 0, 4)
     Title.Text = hubTitle
-    Title.TextColor3 = Color3.fromRGB(240, 240, 245)
+    Title.TextColor3 = currentTheme.Text
     Title.TextSize = 14
     Title.Font = Enum.Font.GothamBold
     Title.TextXAlignment = Enum.TextXAlignment.Left
@@ -321,7 +368,7 @@ function Hibatzzz.CreateWindow(config)
     Subtitle.Size = UDim2.new(1, -(textOffset + 40), 0, 14)
     Subtitle.Position = UDim2.new(0, textOffset, 0, 22)
     Subtitle.Text = hubSubtitle
-    Subtitle.TextColor3 = Color3.fromRGB(120, 120, 140)
+    Subtitle.TextColor3 = currentTheme.TextSub
     Subtitle.TextSize = 10
     Subtitle.Font = Enum.Font.Gotham
     Subtitle.TextXAlignment = Enum.TextXAlignment.Left
@@ -331,7 +378,7 @@ function Hibatzzz.CreateWindow(config)
     local CloseBtn = Instance.new("TextButton")
     CloseBtn.Size = UDim2.new(0, 26, 0, 26)
     CloseBtn.Position = UDim2.new(1, -32, 0, 7)
-    CloseBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+    CloseBtn.BackgroundColor3 = currentTheme.CardBg
     CloseBtn.Text = "X"
     CloseBtn.TextColor3 = Color3.fromRGB(255, 80, 80)
     CloseBtn.Font = Enum.Font.GothamBold
@@ -386,7 +433,7 @@ function Hibatzzz.CreateWindow(config)
 
         local TabButton = Instance.new("TextButton")
         TabButton.Size = UDim2.new(0, 95, 1, 0)
-        TabButton.BackgroundColor3 = Color3.fromRGB(24, 24, 32)
+        TabButton.BackgroundColor3 = currentTheme.CardBg
         TabButton.Text = ""
         TabButton.Parent = TabBar
 
@@ -410,7 +457,7 @@ function Hibatzzz.CreateWindow(config)
         TabTitle.Position = UDim2.new(0, LabelXOffset, 0, 0)
         TabTitle.BackgroundTransparency = 1
         TabTitle.Text = tabName
-        TabTitle.TextColor3 = Color3.fromRGB(140, 140, 160)
+        TabTitle.TextColor3 = currentTheme.TextSub
         TabTitle.Font = Enum.Font.GothamMedium
         TabTitle.TextSize = 11
         TabTitle.Parent = TabButton
@@ -421,7 +468,7 @@ function Hibatzzz.CreateWindow(config)
         TabPage.BackgroundTransparency = 1
         TabPage.BorderSizePixel = 0
         TabPage.ScrollBarThickness = 2
-        TabPage.ScrollBarImageColor3 = Color3.fromRGB(60, 60, 80)
+        TabPage.ScrollBarImageColor3 = currentTheme.Stroke
         TabPage.Visible = false
         TabPage.Parent = ContentContainer
 
@@ -437,12 +484,12 @@ function Hibatzzz.CreateWindow(config)
         local function SelectTab()
             for _, t in pairs(Window.Tabs) do
                 t.Page.Visible = false
-                TweenService:Create(t.Button, TweenInfo.new(0.15), { BackgroundColor3 = Color3.fromRGB(24, 24, 32) }):Play()
-                t.Text.TextColor3 = Color3.fromRGB(140, 140, 160)
+                TweenService:Create(t.Button, TweenInfo.new(0.15), { BackgroundColor3 = currentTheme.CardBg }):Play()
+                t.Text.TextColor3 = currentTheme.TextSub
             end
             TabPage.Visible = true
-            TweenService:Create(TabButton, TweenInfo.new(0.15), { BackgroundColor3 = Color3.fromRGB(40, 40, 58) }):Play()
-            TabTitle.TextColor3 = Color3.fromRGB(255, 255, 255)
+            TweenService:Create(TabButton, TweenInfo.new(0.15), { BackgroundColor3 = currentTheme.Stroke }):Play()
+            TabTitle.TextColor3 = currentTheme.Text
         end
 
         TabButton.MouseButton1Click:Connect(SelectTab)
@@ -466,9 +513,9 @@ function Hibatzzz.CreateWindow(config)
 
         local Button = Instance.new("TextButton")
         Button.Size = UDim2.new(1, 0, 0, 32)
-        Button.BackgroundColor3 = Color3.fromRGB(28, 28, 38)
+        Button.BackgroundColor3 = currentTheme.CardBg
         Button.Text = isLoop and (featureName .. " [OFF]") or featureName
-        Button.TextColor3 = isLoop and Color3.fromRGB(180, 180, 190) or Color3.fromRGB(220, 220, 235)
+        Button.TextColor3 = currentTheme.TextSub
         Button.Font = Enum.Font.GothamMedium
         Button.TextSize = 12
         Button.AutoButtonColor = false
@@ -479,20 +526,19 @@ function Hibatzzz.CreateWindow(config)
         BtnCorner.Parent = Button
 
         local BtnStroke = Instance.new("UIStroke")
-        BtnStroke.Color = Color3.fromRGB(50, 50, 65)
+        BtnStroke.Color = currentTheme.Stroke
         BtnStroke.Thickness = 1
         BtnStroke.Parent = Button
 
         if not isLoop then
-            -- BUTTON BIASA (Sekali klik)
             Button.MouseButton1Click:Connect(function()
-                TweenService:Create(Button, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(45, 45, 65)}):Play()
+                TweenService:Create(Button, TweenInfo.new(0.1), {BackgroundColor3 = currentTheme.Stroke}):Play()
                 task.delay(0.15, function()
-                    TweenService:Create(Button, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(28, 28, 38)}):Play()
+                    TweenService:Create(Button, TweenInfo.new(0.1), {BackgroundColor3 = currentTheme.CardBg}):Play()
                 end)
 
                 if autoNotif then
-                    Hibatzzz:Notification({
+                    Window:Notification({
                         Title = featureName,
                         Description = featureName .. " Executed!",
                         Duration = 2
@@ -502,20 +548,18 @@ function Hibatzzz.CreateWindow(config)
                 pcall(systemCallback)
             end)
         else
-            -- TOGGLE SAKLAR BIASA (Mirip Rayfield)
-            -- Cuma kirim status boolean (true / false) ONCE pas dipencet!
             local toggled = false
             Button.MouseButton1Click:Connect(function()
                 toggled = not toggled
 
                 if toggled then
                     Button.Text = featureName .. " [ON]"
-                    Button.TextColor3 = Color3.fromRGB(255, 255, 255)
-                    TweenService:Create(Button, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(0, 140, 90)}):Play()
-                    BtnStroke.Color = Color3.fromRGB(0, 200, 130)
+                    Button.TextColor3 = currentTheme.Text
+                    TweenService:Create(Button, TweenInfo.new(0.15), {BackgroundColor3 = currentTheme.Accent}):Play()
+                    BtnStroke.Color = currentTheme.AccentActive
 
                     if autoNotif then
-                        Hibatzzz:Notification({
+                        Window:Notification({
                             Title = featureName,
                             Description = featureName .. " ON",
                             Duration = 2
@@ -523,12 +567,12 @@ function Hibatzzz.CreateWindow(config)
                     end
                 else
                     Button.Text = featureName .. " [OFF]"
-                    Button.TextColor3 = Color3.fromRGB(180, 180, 190)
-                    TweenService:Create(Button, TweenInfo.new(0.15), {BackgroundColor3 = Color3.fromRGB(28, 28, 38)}):Play()
-                    BtnStroke.Color = Color3.fromRGB(50, 50, 65)
+                    Button.TextColor3 = currentTheme.TextSub
+                    TweenService:Create(Button, TweenInfo.new(0.15), {BackgroundColor3 = currentTheme.CardBg}):Play()
+                    BtnStroke.Color = currentTheme.Stroke
 
                     if autoNotif then
-                        Hibatzzz:Notification({
+                        Window:Notification({
                             Title = featureName,
                             Description = featureName .. " OFF",
                             Duration = 2
@@ -536,7 +580,6 @@ function Hibatzzz.CreateWindow(config)
                     end
                 end
 
-                -- Eksekusi Callback 1x pas dipencet & ngirim parameter boolean (true/false)
                 pcall(systemCallback, toggled)
             end)
         end
@@ -556,7 +599,7 @@ function Hibatzzz.CreateWindow(config)
         local DropFrame = Instance.new("Frame")
         DropFrame.Name = "DropdownFrame"
         DropFrame.Size = UDim2.new(1, 0, 0, 32)
-        DropFrame.BackgroundColor3 = Color3.fromRGB(28, 28, 38)
+        DropFrame.BackgroundColor3 = currentTheme.CardBg
         DropFrame.ClipsDescendants = true
         DropFrame.Parent = TabObj.Page
 
@@ -565,7 +608,7 @@ function Hibatzzz.CreateWindow(config)
         DropCorner.Parent = DropFrame
 
         local DropStroke = Instance.new("UIStroke")
-        DropStroke.Color = Color3.fromRGB(50, 50, 65)
+        DropStroke.Color = currentTheme.Stroke
         DropStroke.Thickness = 1
         DropStroke.Parent = DropFrame
 
@@ -579,7 +622,7 @@ function Hibatzzz.CreateWindow(config)
         TitleLbl.Size = UDim2.new(0.5, -10, 1, 0)
         TitleLbl.Position = UDim2.new(0, 10, 0, 0)
         TitleLbl.Text = dropName
-        TitleLbl.TextColor3 = Color3.fromRGB(220, 220, 235)
+        TitleLbl.TextColor3 = currentTheme.Text
         TitleLbl.Font = Enum.Font.GothamMedium
         TitleLbl.TextSize = 12
         TitleLbl.TextXAlignment = Enum.TextXAlignment.Left
@@ -590,7 +633,7 @@ function Hibatzzz.CreateWindow(config)
         SelectedLbl.Size = UDim2.new(0.5, -25, 1, 0)
         SelectedLbl.Position = UDim2.new(0.5, 0, 0, 0)
         SelectedLbl.Text = defaultOpt .. " v"
-        SelectedLbl.TextColor3 = Color3.fromRGB(0, 180, 120)
+        SelectedLbl.TextColor3 = currentTheme.Accent
         SelectedLbl.Font = Enum.Font.Gotham
         SelectedLbl.TextSize = 11
         SelectedLbl.TextXAlignment = Enum.TextXAlignment.Right
@@ -632,9 +675,9 @@ function Hibatzzz.CreateWindow(config)
             for _, opt in ipairs(list) do
                 local OptBtn = Instance.new("TextButton")
                 OptBtn.Size = UDim2.new(1, 0, 0, 26)
-                OptBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 28)
+                OptBtn.BackgroundColor3 = currentTheme.MainBg
                 OptBtn.Text = opt
-                OptBtn.TextColor3 = Color3.fromRGB(180, 180, 190)
+                OptBtn.TextColor3 = currentTheme.TextSub
                 OptBtn.Font = Enum.Font.Gotham
                 OptBtn.TextSize = 11
                 OptBtn.Parent = OptionHolder
@@ -650,7 +693,7 @@ function Hibatzzz.CreateWindow(config)
                     RefreshSize()
 
                     if autoNotif then
-                        Hibatzzz:Notification({
+                        Window:Notification({
                             Title = dropName,
                             Description = "Selected: " .. opt,
                             Duration = 2
