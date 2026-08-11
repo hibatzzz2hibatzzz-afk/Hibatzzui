@@ -115,7 +115,6 @@ function Hibatzzz.CreateWindow(config)
     local hubSubtitle = config.SubTitle or "Mobile Edition"
     local hubIcon = config.Icon or ""
     
-    -- CONFIG KEY SYSTEM
     local useKeySystem = config.KeySystem or false
     local keySettings = config.KeySettings or {}
     local correctKey = keySettings.Key or "Hibatzzz123"
@@ -136,7 +135,7 @@ function Hibatzzz.CreateWindow(config)
     MainFrame.Active = true
     MainFrame.Draggable = true
     MainFrame.Parent = ScreenGui
-    MainFrame.Visible = not useKeySystem -- Sembunyikan jika menggunakan KeySystem
+    MainFrame.Visible = not useKeySystem
 
     local UICorner = Instance.new("UICorner")
     UICorner.CornerRadius = UDim.new(0, 10)
@@ -170,9 +169,7 @@ function Hibatzzz.CreateWindow(config)
     OpenStroke.Thickness = 1.5
     OpenStroke.Parent = OpenBtn
 
-    -- ========================================================
-    -- IMPLEMENTASI KEY SYSTEM FRAME
-    -- ========================================================
+    -- KEY SYSTEM
     if useKeySystem then
         local KeyFrame = Instance.new("Frame")
         KeyFrame.Name = "KeyFrame"
@@ -262,7 +259,6 @@ function Hibatzzz.CreateWindow(config)
         GetCorner.CornerRadius = UDim.new(0, 6)
         GetCorner.Parent = GetKeyBtn
 
-        -- Action Submit Key
         SubmitBtn.MouseButton1Click:Connect(function()
             if KeyBox.Text == correctKey then
                 Hibatzzz:Notification({
@@ -281,7 +277,6 @@ function Hibatzzz.CreateWindow(config)
             end
         end)
 
-        -- Action Copy Link Key
         GetKeyBtn.MouseButton1Click:Connect(function()
             if setclipboard then
                 setclipboard(keyLink)
@@ -290,17 +285,10 @@ function Hibatzzz.CreateWindow(config)
                     Description = "Key Link copied to clipboard!",
                     Duration = 2
                 })
-            else
-                Hibatzzz:Notification({
-                    Title = "Key System",
-                    Description = "Clipboard function not supported by executor.",
-                    Duration = 2
-                })
             end
         end)
     end
 
-    -- Header UI
     local Header = Instance.new("Frame")
     Header.Name = "Header"
     Header.Size = UDim2.new(1, 0, 0, 40)
@@ -496,6 +484,7 @@ function Hibatzzz.CreateWindow(config)
         BtnStroke.Parent = Button
 
         if not isLoop then
+            -- TOMBOL BIASA (Klik 1x eksekusi 1x)
             Button.MouseButton1Click:Connect(function()
                 TweenService:Create(Button, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(45, 45, 65)}):Play()
                 task.delay(0.15, function()
@@ -505,7 +494,7 @@ function Hibatzzz.CreateWindow(config)
                 if autoNotif then
                     Hibatzzz:Notification({
                         Title = featureName,
-                        Description = featureName .. " dipencet!",
+                        Description = featureName .. " Executed!",
                         Duration = 2
                     })
                 end
@@ -513,6 +502,11 @@ function Hibatzzz.CreateWindow(config)
                 pcall(systemCallback)
             end)
         else
+            -- ========================================================
+            -- TOGGLE BUTTON (Loop = "yes")
+            -- Murni ON / OFF tanpa while loop otomatis!
+            -- Mengirim parameter 'true' pas ON & 'false' pas OFF
+            -- ========================================================
             local toggled = false
             Button.MouseButton1Click:Connect(function()
                 toggled = not toggled
@@ -531,11 +525,9 @@ function Hibatzzz.CreateWindow(config)
                         })
                     end
 
+                    -- Eksekusi Callback dengan ngirim parameter state = true
                     task.spawn(function()
-                        while toggled do
-                            pcall(systemCallback)
-                            task.wait(0.1)
-                        end
+                        pcall(systemCallback, true)
                     end)
                 else
                     Button.Text = featureName .. " [OFF]"
@@ -550,6 +542,11 @@ function Hibatzzz.CreateWindow(config)
                             Duration = 2
                         })
                     end
+
+                    -- Eksekusi Callback dengan ngirim parameter state = false (UNTUK MATIIN FITUR / HAPUS ESP)
+                    task.spawn(function()
+                        pcall(systemCallback, false)
+                    end)
                 end
             end)
         end
@@ -689,4 +686,3 @@ function Hibatzzz.CreateWindow(config)
 end
 
 return Hibatzzz
-
