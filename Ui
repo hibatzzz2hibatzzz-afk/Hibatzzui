@@ -484,7 +484,7 @@ function Hibatzzz.CreateWindow(config)
         BtnStroke.Parent = Button
 
         if not isLoop then
-            -- TOMBOL BIASA (Klik 1x eksekusi 1x)
+            -- TOMBOL BIASA (Klik 1x = Jalan 1x)
             Button.MouseButton1Click:Connect(function()
                 TweenService:Create(Button, TweenInfo.new(0.1), {BackgroundColor3 = Color3.fromRGB(45, 45, 65)}):Play()
                 task.delay(0.15, function()
@@ -504,8 +504,8 @@ function Hibatzzz.CreateWindow(config)
         else
             -- ========================================================
             -- TOGGLE BUTTON (Loop = "yes")
-            -- Murni ON / OFF tanpa while loop otomatis!
-            -- Mengirim parameter 'true' pas ON & 'false' pas OFF
+            -- Muterin loop otomatis di background, TAPI JUGA
+            -- ngirim parameter 'false' pas OFF biar ESP/Highlight terhapus!
             -- ========================================================
             local toggled = false
             Button.MouseButton1Click:Connect(function()
@@ -525,9 +525,12 @@ function Hibatzzz.CreateWindow(config)
                         })
                     end
 
-                    -- Eksekusi Callback dengan ngirim parameter state = true
+                    -- Muterin fungsi terus-menerus di background sambil ngirim parameter true
                     task.spawn(function()
-                        pcall(systemCallback, true)
+                        while toggled do
+                            pcall(systemCallback, true)
+                            task.wait(0.1) -- Delay aman per loop
+                        end
                     end)
                 else
                     Button.Text = featureName .. " [OFF]"
@@ -543,7 +546,7 @@ function Hibatzzz.CreateWindow(config)
                         })
                     end
 
-                    -- Eksekusi Callback dengan ngirim parameter state = false (UNTUK MATIIN FITUR / HAPUS ESP)
+                    -- PANGGIL 1 KALI DENGAN PARAMETER 'false' SAAT DI-OFFKAN KANAN (Buat Clean/Hapus ESP)
                     task.spawn(function()
                         pcall(systemCallback, false)
                     end)
